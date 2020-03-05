@@ -1,6 +1,4 @@
-## @Bean @Configuration @Autowired @Resource @Inject @Qualifier @Primary
-
----
+## @Bean @Configuration @Autowired @Resource @Inject @Qualifier @Primary @Component
 
 `org.springframework.context.annotation` 패키지에 들어있는 `@Configuration`, `@Bean` 어노테이션을 기반으로 스프링 컨테이너 설정 파일임을 암시하고(`@Configuration`), 메소드를 스프링 컨테이너에 등록(`@Bean`)할 수 있다. 이렇게 등록된 bean은 스프링 컨테이너에서 주입받아 사용하게 된다.
 <br>
@@ -9,8 +7,10 @@
 
 - `빈` 스프링에서 빈은 스프링 컨테이너에 의해서 관리되는 객체(Spring bean == Java Object)<br>
 - `@Configuration` 어노테이션은 클래스 앞에 붙임으로써 `해당 클래스는 스프링 빈을 설정하는 클래스이다` 라는 것을 암시한다.
-- `@Bean` 어노테이션은 메소드 앞에 붙임으로써 `해당 메소드는 bean객체로서 활용`할 것임을 암시하며 반드시 bean instance를 반환해야 한다.
+- `@Bean` 어노테이션은 메소드 상단에 적으며 default로 메소드 이름이 bean의 이름이 된다. 또한 이 메소드가 반환하는 객체가 bean이 되며 반드시 bean instance를 반환해야 한다.
+- `@Component` 어노테이션은 클래스 상단에 적으며 default로 클래스 이름이 bean의 이름이 된다. 또한 Spring에서 자동으로 찾고(`@ComponentScan`을 사용하여) 관리해주는 bean이다.
 - 객체 주입에는 `@Autowired`, `@Resource`, `@Inject` 어노테이션이 있다.
+- TODO: ComponentScan 동작 원리
 
   - `@Autowired`
 
@@ -34,7 +34,9 @@
 
 <br>
 
-기존 `XML`을 활용하여 스프링 빈을 설정하던 방식
+### **XML/Java 빈 설정 방법**
+
+- 기존 `XML`을 활용하여 스프링 빈을 설정하던 방식
 
 ```xml
 <bean id="userDao" class="me.dao.UserDao"/> <!-- 1 -->
@@ -48,7 +50,7 @@
 </bean>
 ```
 
-자바 코드로 스프링 빈을 설정하는 방법
+- 자바 코드로 스프링 빈을 설정하는 방법
 
 ```java
 @Configuration
@@ -75,9 +77,11 @@ public class UserConfig {
 }
 ```
 
-스프링은 default가 Singleton 방식으로 빈을 생성하는데, 프로토타입의 경우? or 같은 타입이 여러개일 경우?<br>
-`@Qualifier` or `@Primary` 사용<br>
-둘 다 존재하는 상황에서는 `@Qualifier`가 우선권을 가진다.
+### **@Qualifier vs @Primary**
+
+- 스프링은 default가 Singleton 방식으로 빈을 생성하는데, 프로토타입의 경우? or 같은 타입이 여러개일 경우?<br>
+  `@Qualifier` or `@Primary` 사용<br>
+  둘 다 존재하는 상황에서는 `@Qualifier`가 우선권을 가진다.
 
 ```java
 @Bean(name = "hihi")
@@ -95,4 +99,25 @@ Say say1
 @Autowired
 @Qualifier("hoho")
 Say say2
+```
+
+### @Component vs @Bean
+
+- 둘의 차이는 [핵심](#핵심)에 적어 놓았고 코드로 다시 한번 보고자 함
+
+```java
+@Component
+public class TestBean { ... }
+```
+
+```java
+public class TestBean { ... }
+
+@Configuration
+public class TestConfig {
+  @Bean
+  public TestBean testBean() {
+    return new TestBean();
+  }
+}
 ```
