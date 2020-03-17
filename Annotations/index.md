@@ -34,6 +34,36 @@
 
 <br>
 
+### 권장되는 객체 주입 방법
+
+- 생성자 Injection
+
+```java
+public class Say {
+
+  private Person person;
+
+  @Autowired
+  public Say(Person person) {
+    this.person = person;
+  }
+}
+```
+
+- 최신버전 스프링에서는 아래와 같이 사용 가능
+- 생성자가 딱 하나만 있는 경우에는 @Autowired가 없어도 됨. 스프링이 자동으로 Injection해줌
+
+```java
+public class Say {
+
+  private Person person;
+
+  public Say(Person person) {
+    this.person = person;
+  }
+}
+```
+
 ### **XML/Java 빈 설정 방법**
 
 - 기존 `XML`을 활용하여 스프링 빈을 설정하던 방식
